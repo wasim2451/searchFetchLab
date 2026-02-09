@@ -10,22 +10,22 @@ interface dataType {
 function App() {
   const [data, setData] = useState<dataType>();
   const [input, setInput] = useState<string>("");
-  const handlefetch = useCallback(async () => {
+  const handlefetch = useCallback(async (input: string) => {
+    if (!input) return;
     if (input != "") {
+      console.log("Input Got rendered !");
       try {
         const res: Promise<Response> = await fetch(
-          `https://jsonplaceholder.typicode.com/posts/` + input,
+          `https://jsonplaceholder.typicode.com/posts/${input}`,
         );
-        const x: dataType = await res.json();
+        const x: dataType = (await res).json();
         if (x) setData(x);
       } catch (error) {
         console.log(error);
       }
     }
   }, []);
-  useEffect(() => {
-    handlefetch();
-  }, [handlefetch]);
+
   return (
     <div>
       <div>Input Field</div>
@@ -35,7 +35,7 @@ function App() {
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
-      <Button fetchData={handlefetch} />
+      <Button fetchData={() => handlefetch(input)} />
       <div>{data?.id}</div>
       <div>{data?.title}</div>
       <div>{data?.body}</div>
