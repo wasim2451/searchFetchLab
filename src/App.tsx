@@ -1,35 +1,46 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
+import "./App.css";
+import Button from "./components/Button";
+import { useState, useEffect, useCallback } from "react";
+interface dataType {
+  userId: number;
+  id: number;
+  title: string;
+  body: string;
+}
 function App() {
-  const [count, setCount] = useState(0)
-
+  const [data, setData] = useState<dataType>();
+  const [input, setInput] = useState<string>("");
+  const handlefetch = useCallback(async () => {
+    if (input != "") {
+      try {
+        const res: Promise<Response> = await fetch(
+          `https://jsonplaceholder.typicode.com/posts/` + input,
+        );
+        const x: dataType = await res.json();
+        if (x) setData(x);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, []);
+  useEffect(() => {
+    handlefetch();
+  }, [handlefetch]);
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <div>Input Field</div>
+      <input
+        type="text"
+        placeholder="Enter user id"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
+      <Button fetchData={handlefetch} />
+      <div>{data?.id}</div>
+      <div>{data?.title}</div>
+      <div>{data?.body}</div>
+    </div>
+  );
 }
 
-export default App
+export default App;
