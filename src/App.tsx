@@ -1,6 +1,6 @@
 import "./App.css";
 import Button from "./components/Button";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 interface dataType {
   userId: number;
   id: number;
@@ -10,16 +10,17 @@ interface dataType {
 function App() {
   const [data, setData] = useState<dataType>();
   const [input, setInput] = useState<string>("");
-  const handlefetch = useCallback(async (input: string) => {
-    if (!input) return;
-    if (input != "") {
+  const handlefetch = useCallback(async (value: string) => {
+    if (!value) return;
+    if (value != "") {
       console.log("Input Got rendered !");
       try {
-        const res: Promise<Response> = await fetch(
-          `https://jsonplaceholder.typicode.com/posts/${input}`,
+        const res: Response = await fetch(
+          `https://jsonplaceholder.typicode.com/posts/${value}`,
         );
-        const x: dataType = (await res).json();
+        const x: dataType = await res.json();
         if (x) setData(x);
+        console.log(x);
       } catch (error) {
         console.log(error);
       }
